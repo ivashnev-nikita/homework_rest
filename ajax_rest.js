@@ -1,30 +1,36 @@
-$(document).ready(function () {
-  $("form").submit(function (event) {
-    var formData = {
-      ip: $("#ip").val(),
-    };
+$(document).ready(function() {
+  $("form").submit(function(event) {
+      var formData = {
+          ip: $("#ip").val(),
+      };
 
-    var url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/iplocate/address?ip=";
-    var token = "a92d7c65c4bba9aff2843da2b3df6869e97d2bcd";
+      var url = "http://suggestions.dadata.ru/suggestions/api/4_1/rs/iplocate/address?ip=";
+      var token = "6a92bb6a1ca5e0ee60f5e8fc443e0a03c0649980";
+      var query = formData.ip;
 
-    $.ajax({
-      type: "GET",
-      url: url + formData.ip,
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader("Authorization", "Token "+ token);
-      },
-      dataType: "json",
-      encode: true,
-    }).done(function (result) {
-      console.log(result);
+      var options = {
+          method: "GET",
+          mode: "cors",
+          headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "Authorization": "Token " + token
+          }
+      }
 
-      // Извлекаем название города из ответа
-      var city = result.location.data.city;
+      fetch(url + query, options)
+          .then(response => response.json())
+          .then(result => {
+              console.log(result);
 
-      // Отображение названия города на странице
-      $("#result").html("City: " + city);
-    });
+              // Извлекаем название города из ответа
+              var city = result.location.data.city;
 
-    event.preventDefault();
+              // Отображение названия города на странице
+              $("#result").html("City: " + city);
+          })
+          .catch(error => console.log("error", error));
+
+      event.preventDefault();
   });
 });
